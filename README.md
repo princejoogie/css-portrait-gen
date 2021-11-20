@@ -1,5 +1,6 @@
 # CPG
-CSS Portrait Generator
+
+CSS Portrait Generator | [try it out](https://cpg.vercel.app)
 
 creating portait from css has been a trend lately so here is a no-code generator for the non tech-savy peeps out there who want to join in the trend/
 
