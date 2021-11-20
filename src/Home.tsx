@@ -36,23 +36,24 @@ export const Home: React.FC = () => {
       <main className="my-10 mb-44">
         <Container>
           {!!error && (
-            <p className="text-red-500 text-center w-full text-sm pb-6">
+            <p className="w-full pb-6 text-sm text-center text-red-500">
               {error}
             </p>
           )}
         </Container>
 
-        <Container className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
-          <div className="flex-1 w-full flex flex-col space-y-2">
+        <Container className="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4">
+          <div className="flex flex-col flex-1 w-full space-y-2">
             <label className="cursor-pointer">
               <input
                 onChange={handleFile}
                 className="hidden"
                 type="file"
                 name="image_input"
+                accept="image/*"
                 id="image_input"
               />
-              <p className="px-4 py-2 rounded shadow bg-gray-800 font-semibold flex items-center justify-center space-x-1 hover:opacity-70 transition-opacity duration-150">
+              <p className="flex items-center justify-center px-4 py-2 space-x-1 font-semibold transition-opacity duration-150 bg-gray-800 rounded shadow hover:opacity-70">
                 <MdOutlineFileUpload className="text-lg" />
                 <span>Choose a background image</span>
               </p>
@@ -62,7 +63,7 @@ export const Home: React.FC = () => {
               <img
                 src={URL.createObjectURL(file)}
                 alt="image_preview"
-                className="w-full object-contain h-80 bg-gray-800"
+                className="object-contain w-full bg-gray-800 h-80"
               />
             ) : (
               <div className="w-full h-64 bg-gray-800 rounded" />
@@ -77,7 +78,7 @@ export const Home: React.FC = () => {
                 if (!!error) setError("");
               }}
               placeholder="Enter lyrics or any text here..."
-              className="w-full h-full bg-transparent text-white border border-gray-700 rounded px-3 py-2"
+              className="w-full h-full px-3 py-2 text-white bg-transparent border border-gray-700 rounded"
               name="input_text"
               id="input_text"
               rows={14}
@@ -88,12 +89,12 @@ export const Home: React.FC = () => {
         <Container className="flex flex-col items-center justify-center mt-10">
           <button
             onClick={generate}
-            className="bg-blue-500 px-10 py-2 rounded uppercase font-bold w-full lg:w-min flex items-center justify-center space-x-2 hover:opacity-70 transition-opacity duration-150"
+            className="flex items-center justify-center w-full px-10 py-2 space-x-2 font-bold uppercase transition-opacity duration-150 bg-blue-500 rounded lg:w-min hover:opacity-70"
           >
             <BsFillGearFill className="text-lg" />
             <span>Generate</span>
           </button>
-          <span className="text-xs text-gray-400 mt-1">
+          <span className="mt-1 text-xs text-gray-400">
             P.S. hitting refresh on generated page will not work.
           </span>
         </Container>
