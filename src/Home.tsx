@@ -85,7 +85,7 @@ export const Home: React.FC = () => {
           </div>
         </Container>
 
-        <Container className="flex items-center justify-center mt-10">
+        <Container className="flex flex-col items-center justify-center mt-10">
           <button
             onClick={generate}
             className="bg-blue-500 px-10 py-2 rounded uppercase font-bold w-full lg:w-min flex items-center justify-center space-x-2 hover:opacity-70 transition-opacity duration-150"
@@ -93,6 +93,9 @@ export const Home: React.FC = () => {
             <BsFillGearFill className="text-lg" />
             <span>Generate</span>
           </button>
+          <span className="text-xs text-gray-400 mt-1">
+            P.S. hitting refresh on generated page will not work.
+          </span>
         </Container>
       </main>
 
