@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { Navbar } from "./Navbar";
-import { Footer } from "./Footer";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { BsFillGearFill } from "react-icons/bs";
-import { Container } from "./Container";
 import { useNavigate } from "react-router";
+import { logEvent } from "firebase/analytics";
+
+import { Footer, Container, Navbar } from "../components";
+import { analytics } from "../utils/database";
+import { AnalyticsEvent } from "../utils/analytics-event";
+import { handleAnalytics } from "../utils/helpers";
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -21,8 +24,8 @@ export const Home: React.FC = () => {
 
   const generate = () => {
     if (file && text) {
-      console.log("Generating");
       const fileUrl = URL.createObjectURL(file);
+      handleAnalytics("GENERATE_PORTRAIT", { text: text.trim() });
       navigate("/generated", { state: { fileUrl, text: text.trim() } });
     } else {
       setError("Please select a file and enter text");

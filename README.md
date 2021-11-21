@@ -1,6 +1,5 @@
-# CPG
+# CPG [![Mentioned in Awesome CSS Text Portrait](https://awesome.re/mentioned-badge-flat.svg)](https://github.com/warengonzaga/awesome-css-text-portrait) 
 
-[![Mentioned in Awesome CSS Text Portrait](https://awesome.re/mentioned-badge-flat.svg)](https://github.com/warengonzaga/awesome-css-text-portrait)
 [![created by](https://img.shields.io/badge/created%20by-Prince%20Carlo%20Juguilon-blue.svg?longCache=true&style=flat-square)](https://github.com/princejoogie) 
 [![release](https://img.shields.io/github/release/princejoogie/css-portrait-gen.svg?style=flat-square)](https://github.com/princejoogie/css-portrait-gen/releases)
 [![star](https://img.shields.io/github/stars/princejoogie/css-portrait-gen.svg?style=flat-square)](https://github.com/princejoogie/css-portrait-gen/stargazers) 

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { AiFillGithub, AiFillLinkedin, AiFillInstagram } from "react-icons/ai";
 import { useLocation, useNavigate } from "react-router";
 
-interface StateProps {
+export interface StateProps {
   fileUrl: string;
   text: string;
 }
 
-const trimText = (text: string) => {
+export const trimText = (text: string) => {
   const max = 10000;
   const og = text.split(" ");
   const oglen = og.length;
@@ -54,8 +54,8 @@ export const Generated: React.FC = () => {
   return (
     <div className="relative flex h-screen w-full bg-[#111111] overflow-hidden">
       {showModal && (
-        <div className="z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-md px-6 shadow-xl py-6 text-black">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="px-6 py-6 text-black bg-white rounded-md shadow-xl">
             <p className="text-lg font-semibold">
               Would appreciate a star on{" "}
               <a
@@ -68,30 +68,30 @@ export const Generated: React.FC = () => {
               :)
             </p>
 
-            <hr className="border-gray-300 my-2" />
+            <hr className="my-2 border-gray-300" />
 
             <div className="py-3">
               <p>Follow me on my socials:</p>
-              <div className="flex space-x-3 mt-1">
+              <div className="flex mt-1 space-x-3">
                 <a href="https://github.com/princejoogie/" target="_blank">
-                  <AiFillGithub className="text-gray-700 text-xl" />
+                  <AiFillGithub className="text-xl text-gray-700" />
                 </a>
                 <a
                   href="https://www.instagram.com/princecaarlo/"
                   target="_blank"
                 >
-                  <AiFillInstagram className="text-gray-700 text-xl" />
+                  <AiFillInstagram className="text-xl text-gray-700" />
                 </a>
                 <a
                   href="https://www.linkedin.com/in/princejoogie/"
                   target="_blank"
                 >
-                  <AiFillLinkedin className="text-gray-700 text-xl" />
+                  <AiFillLinkedin className="text-xl text-gray-700" />
                 </a>
               </div>
             </div>
 
-            <hr className="border-gray-300 my-2" />
+            <hr className="my-2 border-gray-300" />
 
             <div className="flex items-center justify-between">
               <p className="text-xs">
@@ -108,7 +108,7 @@ export const Generated: React.FC = () => {
 
               <button
                 onClick={() => setShowModal(false)}
-                className="bg-green-500 ml-8 px-3 py-1 text-xs rounded text-white "
+                className="px-3 py-1 ml-8 text-xs text-white bg-green-500 rounded "
               >
                 close
               </button>
@@ -129,7 +129,7 @@ export const Generated: React.FC = () => {
           WebkitBackgroundClip: "text",
         }}
         id="text-background"
-        className="w-full text-justify leading-none text-xs"
+        className="w-full text-xs leading-none text-justify"
       >
         {newText}
       </p>
