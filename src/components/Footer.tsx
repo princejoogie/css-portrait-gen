@@ -6,7 +6,7 @@ import { Container } from "./Container";
 export const Footer: React.FC = () => {
   return (
     <footer className="fixed bottom-0 z-50 w-full bg-blue-800 border-t border-gray-700">
-      <Container className="flex flex-col items-center justify-between py-2 space-y-2 text-sm lg:flex-row lg-space-y-0">
+      <Container className="flex flex-col items-center justify-between py-2 space-y-2 text-sm lg:flex-row lg:space-y-0">
         <p>
           {"Made with <3 by "}
           <a

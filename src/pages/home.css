@@ -1,0 +1,34 @@
+.clip-text {
+  position: relative;
+  display: inline-block;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: justify;
+}
+
+.clip-text:before,
+.clip-text:after {
+  position: absolute;
+  content: "";
+}
+
+/* Background */
+.clip-text:before {
+  z-index: -2;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: inherit;
+}
+
+/* Text Background */
+.clip-text:after {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}

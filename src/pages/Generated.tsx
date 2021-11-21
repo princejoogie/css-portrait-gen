@@ -1,34 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { AiFillGithub, AiFillLinkedin, AiFillInstagram } from "react-icons/ai";
 import { useLocation, useNavigate } from "react-router";
+import { trimText } from "../utils/helpers";
 
 export interface StateProps {
   fileUrl: string;
   text: string;
 }
-
-export const trimText = (text: string) => {
-  const max = 10000;
-  const og = text.split(" ");
-  const oglen = og.length;
-  if (oglen > max) {
-    return og.slice(0, max).join(" ");
-  }
-
-  let i = 0;
-  const words = text.split(" ");
-  let len = words.length;
-
-  while (len < max) {
-    words.push(words[i]);
-    if (i > oglen - 1) i = 0;
-    else i++;
-
-    len++;
-  }
-
-  return words.join(" ");
-};
 
 export const Generated: React.FC = () => {
   const location = useLocation();

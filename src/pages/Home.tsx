@@ -2,18 +2,32 @@ import React, { useState } from "react";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { BsFillGearFill } from "react-icons/bs";
 import { useNavigate } from "react-router";
-import { logEvent } from "firebase/analytics";
 
 import { Footer, Container, Navbar } from "../components";
-import { analytics } from "../utils/database";
-import { AnalyticsEvent } from "../utils/analytics-event";
-import { handleAnalytics } from "../utils/helpers";
+import { defaultText, handleAnalytics, trimText } from "../utils/helpers";
+
+import "./home.css";
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+
+  // Config
+  const [fontSize, setFontSize] = useState(12);
+  const [fontSpacing, setFontSpacing] = useState(0);
+  const [lineHeight, setLineHeight] = useState(1);
+  const [objectFit, setObjectFit] = useState("cover");
+
+  console.log({
+    file,
+    text,
+    fontSize,
+    fontSpacing,
+    lineHeight,
+    objectFit,
+  });
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -38,69 +52,150 @@ export const Home: React.FC = () => {
 
       <main className="my-10 mb-44">
         <Container>
-          {!!error && (
-            <p className="w-full pb-6 text-sm text-center text-red-500">
-              {error}
-            </p>
-          )}
-        </Container>
+          <div className="flex flex-col space-x-0 space-y-4 lg:space-x-4 lg:space-y-0 lg:flex-row">
+            {/* Config */}
+            <div className="flex flex-col flex-1 space-y-4">
+              <h3 className="text-xl">Options</h3>
 
-        <Container className="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4">
-          <div className="flex flex-col flex-1 w-full space-y-2">
-            <label className="cursor-pointer">
-              <input
-                onChange={handleFile}
-                className="hidden"
-                type="file"
-                name="image_input"
-                accept="image/*"
-                id="image_input"
+              <div>
+                <label className="cursor-pointer">
+                  <input
+                    onChange={handleFile}
+                    className="hidden"
+                    type="file"
+                    name="image_input"
+                    accept="image/*"
+                    id="image_input"
+                  />
+                  <p className="flex items-center justify-center px-4 py-2 space-x-1 font-semibold transition-opacity duration-150 bg-gray-800 rounded shadow hover:opacity-70">
+                    <MdOutlineFileUpload className="text-lg" />
+                    <span>Choose a background image</span>
+                  </p>
+                </label>
+
+                {/* TODO: Remove */}
+                <span className="block mt-1 text-xs text-gray-400">
+                  {file?.name}
+                </span>
+              </div>
+
+              <textarea
+                value={text}
+                onChange={(e) => {
+                  setText(e.target.value);
+                  if (!!error) setError("");
+                }}
+                placeholder="Enter lyrics or any text here..."
+                className="w-full px-3 py-2 text-white bg-transparent border border-gray-700 rounded outline-none resize-none h-60 hover:border-blue-500"
+                name="input_text"
+                id="input_text"
               />
-              <p className="flex items-center justify-center px-4 py-2 space-x-1 font-semibold transition-opacity duration-150 bg-gray-800 rounded shadow hover:opacity-70">
-                <MdOutlineFileUpload className="text-lg" />
-                <span>Choose a background image</span>
-              </p>
-            </label>
 
-            {file ? (
-              <img
-                src={URL.createObjectURL(file)}
-                alt="image_preview"
-                className="object-contain w-full bg-gray-800 h-80"
-              />
-            ) : (
-              <div className="w-full h-64 bg-gray-800 rounded" />
-            )}
-          </div>
+              <form className="grid w-full grid-cols-2 gap-2 px-3 py-2 text-sm text-gray-400 border border-gray-700 rounded hover:border-blue-500">
+                <div>
+                  <label htmlFor="font_size">Font Size: {fontSize}px</label>
+                  <input
+                    className="w-full"
+                    type="range"
+                    min={4}
+                    step={1}
+                    max={30}
+                    value={fontSize}
+                    onChange={(e) => setFontSize(parseInt(e.target.value))}
+                    name="font_size"
+                    id="font_size"
+                  />
+                </div>
 
-          <div className="flex-1">
-            <textarea
-              value={text}
-              onChange={(e) => {
-                setText(e.target.value);
-                if (!!error) setError("");
-              }}
-              placeholder="Enter lyrics or any text here..."
-              className="w-full h-full px-3 py-2 text-white bg-transparent border border-gray-700 rounded"
-              name="input_text"
-              id="input_text"
-              rows={14}
-            ></textarea>
+                <div>
+                  <label htmlFor="font_spacing">
+                    Font Spacing: {fontSpacing}
+                  </label>
+                  <input
+                    className="w-full"
+                    type="range"
+                    min={0}
+                    step={1}
+                    max={20}
+                    value={fontSpacing}
+                    onChange={(e) => setFontSpacing(parseInt(e.target.value))}
+                    name="font_spacing"
+                    id="font_spacing"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="line_height">Line Height: {lineHeight}</label>
+                  <input
+                    className="w-full"
+                    type="range"
+                    min={0.5}
+                    step={0.01}
+                    max={5}
+                    value={lineHeight}
+                    onChange={(e) => setLineHeight(parseInt(e.target.value))}
+                    name="line-height"
+                    id="line_height"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="object_fit block">Background Fit</label>
+                  <select
+                    name="object_fit"
+                    id="object_fit"
+                    className="w-full px-2 py-1 text-gray-300 bg-gray-800"
+                  >
+                    <option value="cover">Cover</option>
+                    <option value="contain">Contain</option>
+                  </select>
+                </div>
+              </form>
+
+              <button
+                onClick={generate}
+                className="flex items-center justify-center w-full px-10 py-2 space-x-2 font-bold uppercase transition-opacity duration-150 bg-blue-500 rounded lg:w-min hover:opacity-70"
+              >
+                <BsFillGearFill className="text-lg" />
+                <span>Generate</span>
+              </button>
+              {!!error && (
+                <span className="w-full mt-2 text-sm text-center text-red-500">
+                  {error}
+                </span>
+              )}
+              <span className="mt-1 text-xs text-gray-400">
+                P.S. hitting refresh on generated page will not work.
+              </span>
+            </div>
+
+            <hr className="block border-gray-700 lg:hidden" />
+
+            {/* Preview */}
+            <div className="lg:flex-[2] relative flex flex-col space-y-4">
+              <h3 className="text-xl">Preview</h3>
+
+              <div
+                style={{
+                  fontSize: fontSize,
+                  lineHeight: lineHeight,
+                  letterSpacing: fontSpacing,
+                  backgroundImage: file
+                    ? `url(${URL.createObjectURL(file)})`
+                    : "",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                }}
+                className="after:bg-gray-900 clip-text clip-text_one"
+              >
+                {trimText(!!text ? text : defaultText)}
+              </div>
+            </div>
           </div>
         </Container>
 
-        <Container className="flex flex-col items-center justify-center mt-10">
-          <button
-            onClick={generate}
-            className="flex items-center justify-center w-full px-10 py-2 space-x-2 font-bold uppercase transition-opacity duration-150 bg-blue-500 rounded lg:w-min hover:opacity-70"
-          >
-            <BsFillGearFill className="text-lg" />
-            <span>Generate</span>
-          </button>
-          <span className="mt-1 text-xs text-gray-400">
-            P.S. hitting refresh on generated page will not work.
-          </span>
-        </Container>
+        <Container className="flex flex-col items-center justify-center mt-10"></Container>
       </main>
 
       <Footer />
