@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import { MdOutlineFileUpload } from "react-icons/md";
-import { BsFillGearFill } from "react-icons/bs";
+import { MdOutlineFileUpload, MdOutlineFileDownload } from "react-icons/md";
+import { BsArrowRepeat, BsShareFill, BsArrowsFullscreen } from "react-icons/bs";
 import { useNavigate } from "react-router";
 
 import { Footer, Container, Navbar } from "../components";
-import { defaultText, handleAnalytics, trimText } from "../utils/helpers";
+import {
+  defaultText,
+  handleAnalytics,
+  trimText,
+  defaultOptions,
+  IOptions,
+} from "../utils/helpers";
 
 import "./home.css";
 
@@ -18,7 +24,7 @@ export const Home: React.FC = () => {
   const [fontSize, setFontSize] = useState(12);
   const [fontSpacing, setFontSpacing] = useState(0);
   const [lineHeight, setLineHeight] = useState(8);
-  const [objectFit, setObjectFit] = useState("cover");
+  const [objectFit, setObjectFit] = useState<IOptions["objectFit"]>("cover");
 
   console.log({
     file,
@@ -44,6 +50,22 @@ export const Home: React.FC = () => {
     } else {
       setError("Please select a file and enter text");
     }
+  };
+
+  const createShareableLink = () => {
+    const options: IOptions = {
+      fontSize,
+      fontSpacing,
+      lineHeight,
+      objectFit,
+    };
+  };
+
+  const resetSettings = () => {
+    setFontSize(defaultOptions.fontSize);
+    setFontSpacing(defaultOptions.fontSpacing);
+    setLineHeight(defaultOptions.lineHeight);
+    setObjectFit(defaultOptions.objectFit);
   };
 
   return (
@@ -125,7 +147,9 @@ export const Home: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="line_height">Line Height: {lineHeight}</label>
+                  <label htmlFor="line_height">
+                    Line Height: {lineHeight}px
+                  </label>
                   <input
                     className="w-full"
                     type="range"
@@ -146,7 +170,9 @@ export const Home: React.FC = () => {
                     id="object_fit"
                     className="w-full px-2 py-1 text-gray-300 bg-gray-800"
                     value={objectFit}
-                    onChange={(e) => setObjectFit(e.target.value)}
+                    onChange={(e) =>
+                      setObjectFit(e.target.value as IOptions["objectFit"])
+                    }
                   >
                     <option value="cover">Cover</option>
                     <option value="contain">Contain</option>
@@ -155,21 +181,25 @@ export const Home: React.FC = () => {
                 </div>
               </form>
 
-              <button
-                onClick={generate}
-                className="flex items-center justify-center w-full px-10 py-2 space-x-2 font-bold uppercase transition-opacity duration-150 bg-blue-500 rounded lg:w-min hover:opacity-70"
-              >
-                <BsFillGearFill className="text-lg" />
-                <span>Generate</span>
-              </button>
-              {!!error && (
-                <span className="w-full mt-2 text-sm text-center text-red-500">
-                  {error}
-                </span>
-              )}
-              <span className="mt-1 text-xs text-gray-400">
-                P.S. hitting refresh on generated page will not work.
-              </span>
+              <div className="flex items-center w-full space-x-2">
+                <button className="relative flex items-center justify-center flex-1 py-2 space-x-2 transition-opacity duration-150 bg-gray-600 rounded hover:opacity-70">
+                  <BsArrowsFullscreen className="absolute text-lg left-3" />
+                  <p>Full Screen</p>
+                </button>
+
+                <button className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-green-600 rounded hover:opacity-70 place-items-center">
+                  <MdOutlineFileDownload className="text-2xl" />
+                </button>
+                <button className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-blue-600 rounded hover:opacity-70 place-items-center">
+                  <BsShareFill className="text-xl" />
+                </button>
+                <button
+                  onClick={resetSettings}
+                  className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-red-600 rounded hover:opacity-70 place-items-center"
+                >
+                  <BsArrowRepeat className="text-2xl" />
+                </button>
+              </div>
             </div>
 
             <hr className="block border-gray-700 lg:hidden" />
@@ -201,8 +231,6 @@ export const Home: React.FC = () => {
             </div>
           </div>
         </Container>
-
-        <div className="w-full h-32" />
       </main>
 
       <Footer />

@@ -12,6 +12,20 @@ export const handleAnalytics = (
   logEvent(analytics, event, eventParams, options);
 };
 
+export interface IOptions {
+  fontSize: number;
+  fontSpacing: number;
+  lineHeight: number;
+  objectFit: "cover" | "contain" | "auto";
+}
+
+export const defaultOptions: IOptions = {
+  fontSize: 12,
+  fontSpacing: 0,
+  lineHeight: 8,
+  objectFit: "cover",
+};
+
 export const trimText = (text: string) => {
   const max = 5000;
   const og = text.split(" ");
