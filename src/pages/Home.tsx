@@ -2,20 +2,31 @@ import React, { useEffect, useState } from "react";
 import { MdOutlineFileUpload, MdOutlineFileDownload } from "react-icons/md";
 import { BsArrowRepeat, BsShareFill, BsArrowsFullscreen } from "react-icons/bs";
 import { IoCloseSharp } from "react-icons/io5";
-import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
+import { ref } from "firebase/storage";
+import { v4 } from "uuid";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import html2canvas from "html2canvas";
 
 import { Footer, Container, Navbar, Output } from "../components";
-import { defaultOptions, IOptions } from "../utils/helpers";
-
-import "./home.css";
+import {
+  defaultOptions,
+  IOptions,
+  getFileExtension,
+  makeId,
+  ShareableData,
+} from "../utils/helpers";
+import { useUpload } from "../hooks";
+import { storage, db } from "../utils/database";
 
 export const Home: React.FC = () => {
+  const upload = useUpload();
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [creatingLink, setCreatingLink] = useState(false);
 
   // Config
   const [fontSize, setFontSize] = useState(12);
@@ -42,13 +53,56 @@ export const Home: React.FC = () => {
     }
   };
 
-  const createShareableLink = () => {
-    const options: IOptions = {
-      fontSize,
-      letterSpacing,
-      lineHeight,
-      backgroundSize,
-    };
+  const createShareableLink = async () => {
+    if (file) {
+      setCreatingLink(true);
+      const options: IOptions = {
+        fontSize,
+        letterSpacing,
+        lineHeight,
+        backgroundSize,
+      };
+
+      const fileExtension = getFileExtension(file);
+      const name = `uploads/${v4()}.${fileExtension}`;
+      const url = await upload(file, ref(storage, name), (progress) => {
+        console.log({ progress });
+      });
+
+      if (url) {
+        const data: ShareableData = {
+          options,
+          fileUrl: url,
+          text,
+        };
+
+        console.log(data);
+
+        let id = "dsk4w";
+
+        let i = 0;
+
+        while (i < 5) {
+          i++;
+          const docRef = doc(db, "uploads", id);
+          const docSnap = await getDoc(docRef);
+          const exists = !!docSnap.exists();
+
+          console.log(docRef.path, exists);
+
+          if (!exists) {
+            await setDoc(docRef, data);
+            break;
+          }
+
+          id = makeId();
+        }
+
+        console.log(id);
+      }
+
+      setCreatingLink(false);
+    }
   };
 
   const saveToDevice = async () => {
@@ -266,9 +320,8 @@ export const Home: React.FC = () => {
                     <MdOutlineFileDownload className="text-2xl" />
                   </button>
                   <button
-                    // onClick={() => setShowConfirm(true)}
-                    // disabled={!file}
-                    disabled={true}
+                    onClick={() => setShowConfirm(true)}
+                    disabled={!file}
                     className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-blue-600 rounded disabled:opacity-20 disabled:cursor-not-allowed hover:opacity-70 place-items-center"
                   >
                     <BsShareFill className="text-xl" />

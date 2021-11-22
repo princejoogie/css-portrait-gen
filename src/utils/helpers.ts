@@ -12,6 +12,16 @@ export const handleAnalytics = (
   logEvent(analytics, event, eventParams, options);
 };
 
+export const getFileExtension = (file: File) => file.name.split(".").pop();
+
+export const makeId = () => (Math.random() + 1).toString(36).substring(6);
+
+export interface ShareableData {
+  options: IOptions;
+  fileUrl: string;
+  text: string;
+}
+
 export interface IOptions {
   fontSize: number;
   letterSpacing: number;
