@@ -17,7 +17,7 @@ export const Home: React.FC = () => {
   // Config
   const [fontSize, setFontSize] = useState(12);
   const [fontSpacing, setFontSpacing] = useState(0);
-  const [lineHeight, setLineHeight] = useState(1);
+  const [lineHeight, setLineHeight] = useState(8);
   const [objectFit, setObjectFit] = useState("cover");
 
   console.log({
@@ -114,9 +114,9 @@ export const Home: React.FC = () => {
                   <input
                     className="w-full"
                     type="range"
-                    min={0}
+                    min={-3}
                     step={1}
-                    max={20}
+                    max={10}
                     value={fontSpacing}
                     onChange={(e) => setFontSpacing(parseInt(e.target.value))}
                     name="font_spacing"
@@ -129,9 +129,9 @@ export const Home: React.FC = () => {
                   <input
                     className="w-full"
                     type="range"
-                    min={0.5}
-                    step={0.01}
-                    max={5}
+                    min={4}
+                    step={1}
+                    max={30}
                     value={lineHeight}
                     onChange={(e) => setLineHeight(parseInt(e.target.value))}
                     name="line-height"
@@ -145,9 +145,12 @@ export const Home: React.FC = () => {
                     name="object_fit"
                     id="object_fit"
                     className="w-full px-2 py-1 text-gray-300 bg-gray-800"
+                    value={objectFit}
+                    onChange={(e) => setObjectFit(e.target.value)}
                   >
                     <option value="cover">Cover</option>
                     <option value="contain">Contain</option>
+                    <option value="auto">Auto</option>
                   </select>
                 </div>
               </form>
@@ -176,26 +179,30 @@ export const Home: React.FC = () => {
               <h3 className="text-xl">Preview</h3>
 
               <div
-                style={{
-                  fontSize: fontSize,
-                  lineHeight: lineHeight,
-                  letterSpacing: fontSpacing,
-                  backgroundImage: file
-                    ? `url(${URL.createObjectURL(file)})`
-                    : "",
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "center",
-                  backgroundSize: "cover",
-                }}
-                className="after:bg-gray-900 clip-text clip-text_one"
+                className={`relative w-full overflow-hidden h-96 lg:h-[512px] rounded ${
+                  file ? "bg-black" : "bg-gray-800"
+                }`}
               >
-                {trimText(!!text ? text : defaultText)}
+                <p
+                  style={{
+                    backgroundImage: `url(${
+                      file ? URL.createObjectURL(file) : ""
+                    })`,
+                    fontSize,
+                    letterSpacing: fontSpacing,
+                    lineHeight: `${lineHeight}px`,
+                    backgroundSize: objectFit,
+                  }}
+                  className="absolute inset-0 text-justify text-transparent bg-scroll bg-center bg-no-repeat bg-clip-text"
+                >
+                  {trimText(!!text ? text : defaultText)}
+                </p>
               </div>
             </div>
           </div>
         </Container>
 
-        <Container className="flex flex-col items-center justify-center mt-10"></Container>
+        <div className="w-full h-32" />
       </main>
 
       <Footer />
