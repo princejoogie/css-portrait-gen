@@ -15,7 +15,7 @@ creating portait from css has been a trend lately so here is a no-code generator
 
 ## How to use
 
-<img src="./assets/demo1.jpg" />
+<img src="./assets/v1.1.0_demo.jpg" />
 
 1. Click `Choose a background image` button
 2. Enter the lyrics or text you want to overlay the image with
