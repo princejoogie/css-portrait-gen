@@ -29,6 +29,10 @@ export interface IOptions {
   backgroundSize: "cover" | "contain" | "auto";
 }
 
+export const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+};
+
 export const defaultOptions: IOptions = {
   fontSize: 12,
   letterSpacing: 0,

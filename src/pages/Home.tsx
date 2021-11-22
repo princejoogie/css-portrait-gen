@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { MdOutlineFileUpload, MdOutlineFileDownload } from "react-icons/md";
 import { BsArrowRepeat, BsShareFill, BsArrowsFullscreen } from "react-icons/bs";
+import { HiOutlineExternalLink, HiOutlineClipboardCopy } from "react-icons/hi";
 import { IoCloseSharp } from "react-icons/io5";
 import { saveAs } from "file-saver";
-import { ref } from "firebase/storage";
 import { v4 } from "uuid";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { ref } from "firebase/storage";
 import html2canvas from "html2canvas";
 
 import { Footer, Container, Navbar, Output } from "../components";
@@ -15,6 +16,7 @@ import {
   getFileExtension,
   makeId,
   ShareableData,
+  copyToClipboard,
 } from "../utils/helpers";
 import { useUpload } from "../hooks";
 import { storage, db } from "../utils/database";
@@ -26,7 +28,10 @@ export const Home: React.FC = () => {
   const [error, setError] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [creatingLink, setCreatingLink] = useState(false);
+  const [, setCreatingLink] = useState(false);
+  const [urlId, setUrlId] = useState("");
+
+  console.log(urlId);
 
   // Config
   const [fontSize, setFontSize] = useState(12);
@@ -53,7 +58,7 @@ export const Home: React.FC = () => {
     }
   };
 
-  const createShareableLink = async () => {
+  const createShareableLink = async (): Promise<string | null> => {
     if (file) {
       setCreatingLink(true);
       const options: IOptions = {
@@ -65,9 +70,8 @@ export const Home: React.FC = () => {
 
       const fileExtension = getFileExtension(file);
       const name = `uploads/${v4()}.${fileExtension}`;
-      const url = await upload(file, ref(storage, name), (progress) => {
-        console.log({ progress });
-      });
+      const storageRef = ref(storage, name);
+      const url = await upload(file, storageRef);
 
       if (url) {
         const data: ShareableData = {
@@ -76,19 +80,14 @@ export const Home: React.FC = () => {
           text,
         };
 
-        console.log(data);
-
-        let id = "dsk4w";
-
+        let id = makeId();
         let i = 0;
 
-        while (i < 5) {
+        while (i < 1168675000) {
           i++;
           const docRef = doc(db, "uploads", id);
           const docSnap = await getDoc(docRef);
           const exists = !!docSnap.exists();
-
-          console.log(docRef.path, exists);
 
           if (!exists) {
             await setDoc(docRef, data);
@@ -98,11 +97,15 @@ export const Home: React.FC = () => {
           id = makeId();
         }
 
-        console.log(id);
+        setCreatingLink(false);
+        return id;
+      } else {
+        setCreatingLink(false);
+        return null;
       }
-
-      setCreatingLink(false);
     }
+
+    return null;
   };
 
   const saveToDevice = async () => {
@@ -149,6 +152,60 @@ export const Home: React.FC = () => {
     </div>
   ) : (
     <div>
+      {!!urlId && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="text-black bg-white rounded w-full md:w-[356px] lg:w-[512px] mx-4">
+            <div className="flex items-center justify-between px-4 py-2">
+              <h4 className="text-lg">Congratulations!</h4>
+
+              <button onClick={() => setUrlId("")}>
+                <IoCloseSharp className="text-lg" />
+              </button>
+            </div>
+            <hr />
+
+            <div className="p-4 text-gray-700">
+              <p className="text-xl">Your shareable link is ready!</p>
+
+              <div className="flex items-center px-4 py-2 mt-2 border border-gray-300 rounded shadow-md bg-gray-50">
+                <a
+                  className="flex-1 text-sm text-blue-500"
+                  target="_blank"
+                  href={`${window.location.host}/share/${urlId}`}
+                >{`${window.location.host}/share/${urlId}`}</a>
+
+                <button
+                  className="active:opacity-50"
+                  onClick={() =>
+                    copyToClipboard(`${window.location.host}/share/${urlId}`)
+                  }
+                >
+                  <HiOutlineClipboardCopy className="text-2xl text-gray-600" />
+                </button>
+
+                <a
+                  className="active:opacity-50"
+                  target="_blank"
+                  href={`${window.location.host}/share/${urlId}`}
+                >
+                  <HiOutlineExternalLink className="text-2xl text-gray-600" />
+                </a>
+              </div>
+            </div>
+            <hr />
+
+            <div className="flex items-center justify-end px-4 py-2 text-white">
+              <button
+                onClick={() => setUrlId("")}
+                className="px-4 py-1 text-sm text-red-500 capitalize transition-opacity duration-150 rounded hover:opacity-70"
+              >
+                close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showConfirm && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="text-black bg-white rounded w-full md:w-[356px] lg:w-[512px] mx-4">
@@ -178,7 +235,11 @@ export const Home: React.FC = () => {
               </button>
 
               <button
-                onClick={createShareableLink}
+                onClick={async () => {
+                  const urlId = await createShareableLink();
+                  if (!!urlId) setUrlId(urlId);
+                  setShowConfirm(false);
+                }}
                 className="px-4 py-1 text-sm uppercase transition-opacity duration-150 bg-green-600 rounded hover:opacity-70"
               >
                 ok
@@ -187,6 +248,7 @@ export const Home: React.FC = () => {
           </div>
         </div>
       )}
+
       <Navbar />
 
       <main className="my-10 mb-44">
