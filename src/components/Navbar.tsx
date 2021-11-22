@@ -15,7 +15,7 @@ export const Navbar: React.FC = () => {
         <div className="flex space-x-4">
           <a
             onClick={() => handleAnalytics("LINK_GITHUB")}
-            href="https://github.com/princejoogie/"
+            href="https://github.com/princejoogie/css-portrait-gen/"
             target="_blank"
           >
             <AiFillGithub className="text-4xl text-gray-300" />
