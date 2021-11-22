@@ -1,39 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdOutlineFileUpload, MdOutlineFileDownload } from "react-icons/md";
 import { BsArrowRepeat, BsShareFill, BsArrowsFullscreen } from "react-icons/bs";
-import { useNavigate } from "react-router";
+import { IoCloseSharp } from "react-icons/io5";
 
-import { Footer, Container, Navbar } from "../components";
-import {
-  defaultText,
-  handleAnalytics,
-  trimText,
-  defaultOptions,
-  IOptions,
-} from "../utils/helpers";
+import { Footer, Container, Navbar, Output } from "../components";
+import { defaultOptions, IOptions } from "../utils/helpers";
 
 import "./home.css";
 
 export const Home: React.FC = () => {
-  const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+  const [fullScreen, setFullScreen] = useState(false);
 
   // Config
   const [fontSize, setFontSize] = useState(12);
-  const [fontSpacing, setFontSpacing] = useState(0);
+  const [letterSpacing, setLetterSpacing] = useState(0);
   const [lineHeight, setLineHeight] = useState(8);
-  const [objectFit, setObjectFit] = useState<IOptions["objectFit"]>("cover");
+  const [backgroundSize, setBackgroundSize] =
+    useState<IOptions["backgroundSize"]>("cover");
 
-  console.log({
-    file,
-    text,
-    fontSize,
-    fontSpacing,
-    lineHeight,
-    objectFit,
-  });
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setFullScreen(false);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,33 +39,44 @@ export const Home: React.FC = () => {
     }
   };
 
-  const generate = () => {
-    if (file && text) {
-      const fileUrl = URL.createObjectURL(file);
-      handleAnalytics("GENERATE_PORTRAIT", { text: text.trim() });
-      navigate("/generated", { state: { fileUrl, text: text.trim() } });
-    } else {
-      setError("Please select a file and enter text");
-    }
-  };
-
   const createShareableLink = () => {
     const options: IOptions = {
       fontSize,
-      fontSpacing,
+      letterSpacing,
       lineHeight,
-      objectFit,
+      backgroundSize,
     };
   };
 
   const resetSettings = () => {
     setFontSize(defaultOptions.fontSize);
-    setFontSpacing(defaultOptions.fontSpacing);
+    setLetterSpacing(defaultOptions.letterSpacing);
     setLineHeight(defaultOptions.lineHeight);
-    setObjectFit(defaultOptions.objectFit);
+    setBackgroundSize(defaultOptions.backgroundSize);
   };
 
-  return (
+  return fullScreen ? (
+    <div className="fixed inset-0 flex items-center justify-center">
+      <div className="relative w-full h-full">
+        <button
+          onClick={() => setFullScreen(false)}
+          className="absolute top-0 right-0 z-50 p-4 m-4 text-3xl transition-opacity duration-150 bg-gray-700 rounded-full shadow hover:opacity-80"
+        >
+          <IoCloseSharp />
+        </button>
+        <Output
+          options={{
+            backgroundSize,
+            fontSize,
+            letterSpacing,
+            lineHeight,
+          }}
+          file={file}
+          text={text}
+        />
+      </div>
+    </div>
+  ) : (
     <div>
       <Navbar />
 
@@ -131,7 +139,7 @@ export const Home: React.FC = () => {
 
                 <div>
                   <label htmlFor="font_spacing">
-                    Font Spacing: {fontSpacing}
+                    Font Spacing: {letterSpacing}
                   </label>
                   <input
                     className="w-full"
@@ -139,8 +147,8 @@ export const Home: React.FC = () => {
                     min={-3}
                     step={1}
                     max={10}
-                    value={fontSpacing}
-                    onChange={(e) => setFontSpacing(parseInt(e.target.value))}
+                    value={letterSpacing}
+                    onChange={(e) => setLetterSpacing(parseInt(e.target.value))}
                     name="font_spacing"
                     id="font_spacing"
                   />
@@ -169,9 +177,11 @@ export const Home: React.FC = () => {
                     name="object_fit"
                     id="object_fit"
                     className="w-full px-2 py-1 text-gray-300 bg-gray-800"
-                    value={objectFit}
+                    value={backgroundSize}
                     onChange={(e) =>
-                      setObjectFit(e.target.value as IOptions["objectFit"])
+                      setBackgroundSize(
+                        e.target.value as IOptions["backgroundSize"]
+                      )
                     }
                   >
                     <option value="cover">Cover</option>
@@ -182,20 +192,36 @@ export const Home: React.FC = () => {
               </form>
 
               <div className="flex items-center w-full space-x-2">
-                <button className="relative flex items-center justify-center flex-1 py-2 space-x-2 transition-opacity duration-150 bg-gray-600 rounded hover:opacity-70">
+                <button
+                  onClick={() => setFullScreen(true)}
+                  disabled={!file}
+                  className="relative flex items-center justify-center flex-1 py-2 space-x-2 transition-opacity duration-150 bg-gray-600 rounded disabled:cursor-not-allowed disabled:opacity-20 hover:opacity-70"
+                >
                   <BsArrowsFullscreen className="absolute text-lg left-3" />
                   <p>Full Screen</p>
                 </button>
 
-                <button className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-green-600 rounded hover:opacity-70 place-items-center">
+                <button
+                  disabled={!file}
+                  className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-green-600 rounded disabled:opacity-20 disabled:cursor-not-allowed hover:opacity-70 place-items-center"
+                >
                   <MdOutlineFileDownload className="text-2xl" />
                 </button>
-                <button className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-blue-600 rounded hover:opacity-70 place-items-center">
+                <button
+                  disabled={!file}
+                  className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-blue-600 rounded disabled:opacity-20 disabled:cursor-not-allowed hover:opacity-70 place-items-center"
+                >
                   <BsShareFill className="text-xl" />
                 </button>
                 <button
                   onClick={resetSettings}
-                  className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-red-600 rounded hover:opacity-70 place-items-center"
+                  disabled={
+                    fontSize === defaultOptions.fontSize &&
+                    letterSpacing === defaultOptions.letterSpacing &&
+                    lineHeight === defaultOptions.lineHeight &&
+                    backgroundSize === defaultOptions.backgroundSize
+                  }
+                  className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-red-600 rounded hover:opacity-70 place-items-center disabled:opacity-20 disabled:cursor-not-allowed"
                 >
                   <BsArrowRepeat className="text-2xl" />
                 </button>
@@ -213,20 +239,16 @@ export const Home: React.FC = () => {
                   file ? "bg-black" : "bg-gray-800"
                 }`}
               >
-                <p
-                  style={{
-                    backgroundImage: `url(${
-                      file ? URL.createObjectURL(file) : ""
-                    })`,
+                <Output
+                  options={{
+                    backgroundSize,
                     fontSize,
-                    letterSpacing: fontSpacing,
-                    lineHeight: `${lineHeight}px`,
-                    backgroundSize: objectFit,
+                    letterSpacing,
+                    lineHeight,
                   }}
-                  className="absolute inset-0 text-justify text-transparent bg-scroll bg-center bg-no-repeat bg-clip-text"
-                >
-                  {trimText(!!text ? text : defaultText)}
-                </p>
+                  file={file}
+                  text={text}
+                />
               </div>
             </div>
           </div>

@@ -14,23 +14,28 @@ export const handleAnalytics = (
 
 export interface IOptions {
   fontSize: number;
-  fontSpacing: number;
+  letterSpacing: number;
   lineHeight: number;
-  objectFit: "cover" | "contain" | "auto";
+  backgroundSize: "cover" | "contain" | "auto";
 }
 
 export const defaultOptions: IOptions = {
   fontSize: 12,
-  fontSpacing: 0,
+  letterSpacing: 0,
   lineHeight: 8,
-  objectFit: "cover",
+  backgroundSize: "cover",
 };
 
-export const trimText = (text: string) => {
-  const max = 5000;
+export const trimText = (text: string, options: IOptions) => {
+  let max = 7000;
+  if (options.letterSpacing < -1) max = 20000;
+  else if (options.fontSize < 8 || options.lineHeight < 4) max = 15500;
+  else if (options.fontSize < 10 || options.lineHeight < 6) max = 11000;
+  else if (options.fontSize < 12 || options.lineHeight < 8) max = 10000;
+
   const og = text.split(" ");
-  const oglen = og.length;
-  if (oglen > max) {
+  const ogLen = og.length;
+  if (ogLen > max) {
     return og.slice(0, max).join(" ");
   }
 
@@ -40,7 +45,7 @@ export const trimText = (text: string) => {
 
   while (len < max) {
     words.push(words[i]);
-    if (i > oglen - 1) i = 0;
+    if (i > ogLen - 1) i = 0;
     else i++;
 
     len++;
