@@ -15,6 +15,7 @@ export const Home: React.FC = () => {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // Config
   const [fontSize, setFontSize] = useState(12);
@@ -94,6 +95,44 @@ export const Home: React.FC = () => {
     </div>
   ) : (
     <div>
+      {showConfirm && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="text-black bg-white rounded w-full md:w-[356px] lg:w-[512px] mx-4">
+            <div className="flex items-center justify-between px-4 py-2">
+              <h4 className="text-lg">Confirmation</h4>
+
+              <button onClick={() => setShowConfirm(false)}>
+                <IoCloseSharp className="text-lg" />
+              </button>
+            </div>
+            <hr />
+
+            <div className="p-4 text-gray-700">
+              <p className="text-xl">Are you sure?</p>
+              <span className="text-sm text-gray-500">
+                creating a shareable link will be public.
+              </span>
+            </div>
+            <hr />
+
+            <div className="flex items-center justify-end px-4 py-2 text-white">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-1 text-sm text-red-500 capitalize transition-opacity duration-150 rounded hover:opacity-70"
+              >
+                cancel
+              </button>
+
+              <button
+                onClick={createShareableLink}
+                className="px-4 py-1 text-sm uppercase transition-opacity duration-150 bg-green-600 rounded hover:opacity-70"
+              >
+                ok
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Navbar />
 
       <main className="my-10 mb-44">
@@ -192,7 +231,7 @@ export const Home: React.FC = () => {
                   <select
                     name="object_fit"
                     id="object_fit"
-                    className="w-full px-2 py-1 text-gray-300 bg-gray-800"
+                    className="w-full px-2 py-1 text-gray-300 transition-opacity duration-150 bg-gray-800 rounded hover:opacity-70"
                     value={backgroundSize}
                     onChange={(e) =>
                       setBackgroundSize(
@@ -227,7 +266,7 @@ export const Home: React.FC = () => {
                     <MdOutlineFileDownload className="text-2xl" />
                   </button>
                   <button
-                    onClick={createShareableLink}
+                    onClick={() => setShowConfirm(true)}
                     disabled={!file}
                     className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-blue-600 rounded disabled:opacity-20 disabled:cursor-not-allowed hover:opacity-70 place-items-center"
                   >

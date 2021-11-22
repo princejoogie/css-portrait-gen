@@ -27,10 +27,10 @@ export const defaultOptions: IOptions = {
 };
 
 export const trimText = (text: string, options: IOptions) => {
-  let max = 7000;
+  let max = 7500;
   if (options.letterSpacing < -1) max = 20000;
   else if (options.fontSize < 8 || options.lineHeight < 4) max = 15500;
-  else if (options.fontSize < 10 || options.lineHeight < 6) max = 11000;
+  else if (options.fontSize < 10 || options.lineHeight < 6) max = 12000;
   else if (options.fontSize < 12 || options.lineHeight < 8) max = 10000;
 
   const og = text.split(" ");
