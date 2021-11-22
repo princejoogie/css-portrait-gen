@@ -167,11 +167,11 @@ export const Home: React.FC = () => {
               <p className="text-xl">Your shareable link is ready!</p>
 
               <div className="flex items-center px-4 py-2 mt-2 border border-gray-300 rounded shadow-md bg-gray-50">
-                <a
-                  className="flex-1 text-sm text-blue-500"
+                <Link
+                  to={`share/${urlId}`}
                   target="_blank"
-                  href={`${window.location.host}/share/${urlId}`}
-                >{`${window.location.host}/share/${urlId}`}</a>
+                  className="flex-1 text-sm text-blue-500"
+                >{`${window.location.host}/share/${urlId}`}</Link>
 
                 <button
                   className="active:opacity-50"
