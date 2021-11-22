@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { MdOutlineFileUpload, MdOutlineFileDownload } from "react-icons/md";
 import { BsArrowRepeat, BsShareFill, BsArrowsFullscreen } from "react-icons/bs";
 import { IoCloseSharp } from "react-icons/io5";
+import html2canvas from "html2canvas";
+import { saveAs } from "file-saver";
 
 import { Footer, Container, Navbar, Output } from "../components";
 import { defaultOptions, IOptions } from "../utils/helpers";
@@ -48,6 +50,20 @@ export const Home: React.FC = () => {
     };
   };
 
+  const saveToDevice = async () => {
+    try {
+      const el = document.getElementById("preview_image");
+      if (el) {
+        const canvas = await html2canvas(el);
+        canvas.toBlob((blob) => {
+          if (blob) saveAs(blob, "preview.png");
+        });
+      }
+    } catch (e) {
+      console.log("ERROR_SAVING:", e);
+    }
+  };
+
   const resetSettings = () => {
     setFontSize(defaultOptions.fontSize);
     setLetterSpacing(defaultOptions.letterSpacing);
@@ -56,7 +72,7 @@ export const Home: React.FC = () => {
   };
 
   return fullScreen ? (
-    <div className="fixed inset-0 flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-black">
       <div className="relative w-full h-full">
         <button
           onClick={() => setFullScreen(false)}
@@ -191,40 +207,48 @@ export const Home: React.FC = () => {
                 </div>
               </form>
 
-              <div className="flex items-center w-full space-x-2">
-                <button
-                  onClick={() => setFullScreen(true)}
-                  disabled={!file}
-                  className="relative flex items-center justify-center flex-1 py-2 space-x-2 transition-opacity duration-150 bg-gray-600 rounded disabled:cursor-not-allowed disabled:opacity-20 hover:opacity-70"
-                >
-                  <BsArrowsFullscreen className="absolute text-lg left-3" />
-                  <p>Full Screen</p>
-                </button>
+              <div>
+                <div className="flex items-center w-full space-x-2">
+                  <button
+                    onClick={() => setFullScreen(true)}
+                    disabled={!file}
+                    className="relative flex items-center justify-center flex-1 py-2 space-x-2 transition-opacity duration-150 bg-gray-600 rounded disabled:cursor-not-allowed disabled:opacity-20 hover:opacity-70"
+                  >
+                    <BsArrowsFullscreen className="absolute text-lg left-3" />
+                    <p>Full Screen</p>
+                  </button>
 
-                <button
-                  disabled={!file}
-                  className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-green-600 rounded disabled:opacity-20 disabled:cursor-not-allowed hover:opacity-70 place-items-center"
-                >
-                  <MdOutlineFileDownload className="text-2xl" />
-                </button>
-                <button
-                  disabled={!file}
-                  className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-blue-600 rounded disabled:opacity-20 disabled:cursor-not-allowed hover:opacity-70 place-items-center"
-                >
-                  <BsShareFill className="text-xl" />
-                </button>
-                <button
-                  onClick={resetSettings}
-                  disabled={
-                    fontSize === defaultOptions.fontSize &&
-                    letterSpacing === defaultOptions.letterSpacing &&
-                    lineHeight === defaultOptions.lineHeight &&
-                    backgroundSize === defaultOptions.backgroundSize
-                  }
-                  className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-red-600 rounded hover:opacity-70 place-items-center disabled:opacity-20 disabled:cursor-not-allowed"
-                >
-                  <BsArrowRepeat className="text-2xl" />
-                </button>
+                  <button
+                    // onClick={saveToDevice}
+                    // disabled={!file}
+                    disabled={true}
+                    className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-green-600 rounded disabled:opacity-20 disabled:cursor-not-allowed hover:opacity-70 place-items-center"
+                  >
+                    <MdOutlineFileDownload className="text-2xl" />
+                  </button>
+                  <button
+                    onClick={createShareableLink}
+                    disabled={!file}
+                    className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-blue-600 rounded disabled:opacity-20 disabled:cursor-not-allowed hover:opacity-70 place-items-center"
+                  >
+                    <BsShareFill className="text-xl" />
+                  </button>
+                  <button
+                    onClick={resetSettings}
+                    disabled={
+                      fontSize === defaultOptions.fontSize &&
+                      letterSpacing === defaultOptions.letterSpacing &&
+                      lineHeight === defaultOptions.lineHeight &&
+                      backgroundSize === defaultOptions.backgroundSize
+                    }
+                    className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-red-600 rounded hover:opacity-70 place-items-center disabled:opacity-20 disabled:cursor-not-allowed"
+                  >
+                    <BsArrowRepeat className="text-2xl" />
+                  </button>
+                </div>
+                <span className="block mt-1 text-xs text-center text-green-500">
+                  Save to device coming soon!
+                </span>
               </div>
             </div>
 
@@ -235,6 +259,7 @@ export const Home: React.FC = () => {
               <h3 className="text-xl">Preview</h3>
 
               <div
+                id="preview_image"
                 className={`relative w-full overflow-hidden h-96 lg:h-[512px] rounded ${
                   file ? "bg-black" : "bg-gray-800"
                 }`}
