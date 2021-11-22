@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MdOutlineFileUpload, MdOutlineFileDownload } from "react-icons/md";
 import { BsArrowRepeat, BsShareFill, BsArrowsFullscreen } from "react-icons/bs";
 import { HiOutlineExternalLink, HiOutlineClipboardCopy } from "react-icons/hi";
+import { Link } from "react-router-dom";
 import { IoCloseSharp } from "react-icons/io5";
 import { saveAs } from "file-saver";
 import { v4 } from "uuid";
@@ -181,13 +182,13 @@ export const Home: React.FC = () => {
                   <HiOutlineClipboardCopy className="text-2xl text-gray-600" />
                 </button>
 
-                <a
-                  className="active:opacity-50"
+                <Link
+                  to={`share/${urlId}`}
                   target="_blank"
-                  href={`${window.location.host}/share/${urlId}`}
+                  className="active:opacity-50"
                 >
                   <HiOutlineExternalLink className="text-2xl text-gray-600" />
-                </a>
+                </Link>
               </div>
             </div>
             <hr />
@@ -400,7 +401,7 @@ export const Home: React.FC = () => {
                   </button>
                 </div>
                 <span className="block mt-1 text-xs text-center text-green-500">
-                  Share & Save to device coming soon!
+                  Save to device coming soon!
                 </span>
               </div>
             </div>
