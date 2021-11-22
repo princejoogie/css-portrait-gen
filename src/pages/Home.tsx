@@ -266,8 +266,9 @@ export const Home: React.FC = () => {
                     <MdOutlineFileDownload className="text-2xl" />
                   </button>
                   <button
-                    onClick={() => setShowConfirm(true)}
-                    disabled={!file}
+                    // onClick={() => setShowConfirm(true)}
+                    // disabled={!file}
+                    disabled={true}
                     className="grid w-10 h-10 p-2 text-gray-300 transition-opacity duration-150 bg-blue-600 rounded disabled:opacity-20 disabled:cursor-not-allowed hover:opacity-70 place-items-center"
                   >
                     <BsShareFill className="text-xl" />
@@ -286,7 +287,7 @@ export const Home: React.FC = () => {
                   </button>
                 </div>
                 <span className="block mt-1 text-xs text-center text-green-500">
-                  Save to device coming soon!
+                  Share & Save to device coming soon!
                 </span>
               </div>
             </div>
