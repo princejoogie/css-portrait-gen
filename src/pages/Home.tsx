@@ -28,10 +28,8 @@ export const Home: React.FC = () => {
   const [error, setError] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [, setCreatingLink] = useState(false);
+  const [creatingLink, setCreatingLink] = useState(false);
   const [urlId, setUrlId] = useState("");
-
-  console.log(urlId);
 
   // Config
   const [fontSize, setFontSize] = useState(12);
@@ -242,7 +240,7 @@ export const Home: React.FC = () => {
                 }}
                 className="px-4 py-1 text-sm uppercase transition-opacity duration-150 bg-green-600 rounded hover:opacity-70"
               >
-                ok
+                {creatingLink ? "creating..." : "ok"}
               </button>
             </div>
           </div>
